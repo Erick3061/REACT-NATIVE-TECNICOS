@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Account, datalogIn, event, LogInData, ResponseApi, responseLoadFile, ServiceDetails, Services } from '../interfaces/interfaces';
 
-const baseUrl = 'https://pem-sa.ddns.me:3007/api';
+// const baseUrl = 'https://pem-sa.ddns.me:3007/api';
 // const baseUrl = 'http://127.0.0.1:3007/api';
+const baseUrl = 'http://192.168.0.4:3007/api';
 export const Api = async (endpoint: string, data: object = {}, method: 'GET' | 'POST' = 'GET') => {
     const url = `${baseUrl}/${endpoint}`;
     const token = await AsyncStorage.getItem('token');
@@ -11,9 +12,14 @@ export const Api = async (endpoint: string, data: object = {}, method: 'GET' | '
     return (method === 'GET') ? fetch(url, { method, headers }) : fetch(url, { method, headers, body: JSON.stringify(data) });
 }
 
-export const loadFile = async (props: FormData) => {
+export const loadFile = async ({ file, id_service }: { file: FormData, id_service: string }) => {
     try {
-        const response = await Api('files/loadFile', props, 'POST');
+        const token = await AsyncStorage.getItem('token');
+        const response = await fetch(`${baseUrl}/files/loadFile/${id_service}`, {
+            body: file,
+            headers: (token) ? { 'Content-type': 'multipart/form-data', 'x-token': token } : { 'Content-Type': 'multipart/form-data' },
+            method: 'PUT'
+        })
         const { status, data, errors }: ResponseApi<responseLoadFile> = await response.json();
         if (status && data) return data;
         throw new Error(errors![0].msg);

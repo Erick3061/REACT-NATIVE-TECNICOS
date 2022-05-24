@@ -29,22 +29,24 @@ export const LoadFiles = () => {
 
     const takePhoto = () => {
         const formData = new FormData();
-        launchCamera({ mediaType: 'photo' }, async ({ assets, didCancel, errorCode, errorMessage }) => {
+        launchCamera({
+            mediaType: 'photo',
+            maxWidth: 300,
+            maxHeight: 550,
+            quality: 1,
+            saveToPhotos: true,
+        }, async ({ assets, didCancel, errorCode, errorMessage }) => {
             if (errorMessage) {
                 askCameraPermission();
             }
             if (assets) {
-                console.log(assets);
                 const fileUpload = {
                     uri: assets[0].uri,
                     type: assets[0].type,
                     name: assets[0].fileName,
                 }
                 formData.append('file', fileUpload);
-                formData.append('id_service', `${service?.id_service}`);
-                console.log(formData);
-
-                loadFileM.mutate(formData);
+                loadFileM.mutate({ file: formData, id_service: service!.id_service });
             }
         });
     }
