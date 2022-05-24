@@ -36,9 +36,6 @@ export const UserScreen = () => {
             </>
         );
     }
-    useEffect(() => {
-        console.log(service);
-    }, [service])
 
     return (
         (service && service.isTimeExpired)

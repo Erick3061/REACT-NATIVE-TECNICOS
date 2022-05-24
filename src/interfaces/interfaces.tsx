@@ -1,4 +1,6 @@
 import { status } from "../types/reducersTypes";
+import { PermissionStatus } from 'react-native-permissions';
+import { ImagePickerResponse } from 'react-native-image-picker';
 export interface Message {
     message: string;
     type: 'error' | 'message' | 'warning';
@@ -17,6 +19,7 @@ export interface AppState {
     service: Service | undefined;
     account: Account | undefined;
     expired: Expired | undefined;
+    cameraPermissionStatus: PermissionStatus;
 }
 
 export interface Account {
@@ -119,6 +122,14 @@ export interface datalogIn {
     Person: Person;
     token: string;
     Service?: Service;
+    AccountMW?: Account;
+}
+
+export interface responseLoadFile {
+    isInserted: boolean;
+    nameFile: string;
+    directoryFile: string;
+    fullDirectory: string;
 }
 
 export interface event {

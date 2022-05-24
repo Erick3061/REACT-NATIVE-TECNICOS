@@ -1,32 +1,32 @@
-import React, { Fragment, useContext, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { createDrawerNavigator, DrawerContentComponentProps, DrawerContentScrollView, DrawerHeaderProps, DrawerItem } from '@react-navigation/drawer'
 import { HomeScreen } from '../screens/private/HomeScreen';
-import { Title, Drawer, Avatar, IconButton, Colors, useTheme, Appbar, List } from 'react-native-paper';
-import { View, Image, StatusBar, Text, Pressable, StyleSheet } from 'react-native';
-import { AcountDataTopTabs } from './Tabs';
+import { Title, Drawer, Avatar, IconButton, Appbar, List } from 'react-native-paper';
+import { View, StatusBar, Text } from 'react-native';
+import { AccountServiceTopTabs, AcountDataTopTabs } from './Tabs';
 import { AppContext } from '../context/AppContext';
 import { colors } from '../theme/colors';
 import { ItemDrawer } from '../components/ItemDrawer';
 import { ChangePasswordScreen } from '../screens/private/ChangePasswordScreen';
-import { DrawerStyle, screen } from '../theme/styles';
+import { DrawerStyle } from '../theme/styles';
 import { AccountGeneral } from '../screens/private/AccountGeneral';
 import { EventsScreen } from '../screens/private/EventsScreen';
 import { HistoryScreen } from '../screens/private/HistoryScreen';
 import { ValidateServiceScreen } from '../screens/private/ValidateServiceScreen';
 import { ServicesScreen } from '../screens/private/ServicesScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { LoadFiles } from '../screens/private/LoadFiles';
 export type RootDrawerNAvigator = {
-
     HomeScreen: undefined;
     AccountGeneral: undefined;
-    AcountDataTabs: undefined;
+    AccountServiceTopTabs: undefined;
     AcountDataTopTabs: undefined;
     ChangePasswordScreen: undefined;
     HistoryScreen: undefined;
     EventsScreen: undefined;
     ValidateServiceScreen: undefined;
     ServicesScreen: undefined;
+    LoadFiles: undefined;
 }
 
 export const Menu = () => {
@@ -55,6 +55,7 @@ export const Menu = () => {
                         <menuDrawer.Screen name="AcountDataTopTabs" options={{ title: 'Datos del sistema' }} component={AcountDataTopTabs} />
                         <menuDrawer.Screen name="HistoryScreen" options={{ title: 'Historial de Eventos' }} component={HistoryScreen} />
                         <menuDrawer.Screen name="EventsScreen" options={{ title: 'Eventos en tiempo real' }} component={EventsScreen} />
+                        <menuDrawer.Screen name="AccountServiceTopTabs" options={{ title: 'Obtener folio' }} component={AccountServiceTopTabs} />
                         <menuDrawer.Screen name="ValidateServiceScreen" options={{ title: 'Obtener folio' }} component={ValidateServiceScreen} />
                         <menuDrawer.Screen name="ChangePasswordScreen" options={{ title: 'Cambiar contraseña' }} component={ChangePasswordScreen} />
                         <menuDrawer.Screen name="ServicesScreen" options={{ title: 'Mis servicios' }} component={ServicesScreen} />
@@ -65,7 +66,6 @@ export const Menu = () => {
                         <menuDrawer.Screen name="ChangePasswordScreen" options={{ title: 'Cambiar contraseña' }} component={ChangePasswordScreen} />
                         <menuDrawer.Screen name="ServicesScreen" options={{ title: 'Mis servicios' }} component={ServicesScreen} />
                     </>
-
             }
         </menuDrawer.Navigator>
     )
@@ -192,6 +192,16 @@ const MenuContent = (props: DrawerContentComponentProps) => {
                 {
                     (service && !service.withOutFolio) &&
                     <>
+                        <ItemDrawer
+                            active={active}
+                            icon_name='business-outline'
+                            nameOpc='AccountServiceTopTabs'
+                            props={props}
+                            setActive={setActive}
+                            label="Obtener folio"
+                            navigate='AccountServiceTopTabs'
+                            key='AccountServiceTopTabs'
+                        />
                         <ItemDrawer
                             active={active}
                             icon_name='push-outline'

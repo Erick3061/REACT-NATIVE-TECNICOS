@@ -38,6 +38,11 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
                 ...state,
                 message: action.payload.message
             }
+        case 'setCameraPermission':
+            return {
+                ...state,
+                cameraPermissionStatus: action.payload.cameraPermissionStatus
+            }
         default:
             return state;
     }

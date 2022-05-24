@@ -8,42 +8,43 @@ import { AppContext } from '../../context/AppContext';
 import { getExpired, validateError } from '../../functions/helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ShowMessage } from '../../components/modals/ModalShowMessage';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { GetAccountMW, validarJWT } from '../../api/Api';
 import { useIsFocused } from '@react-navigation/native';
 import { Text } from 'react-native-paper';
 
 export const AccountGeneral = () => {
+    const queryClient = useQueryClient();
     const { service, account, setAccount, logOut, message, setMessage, setPerson, setService, setExpired, expired } = useContext(AppContext);
     const isFocused = useIsFocused();
-    const JWT = useQuery(["JWT"], () => validarJWT(), {
-        enabled: false,
-        refetchOnMount: false,
-        refetchOnReconnect: false,
-        refetchOnWindowFocus: false,
-        retry: 1,
-        onSuccess: async ({ Person, token, Service }) => {
-            await setPerson(Person, token);
-            setService(Service);
-            if (Service) {
-                const expired = getExpired(new Date(Service.exitDate));
-                setExpired(expired);
-            } else {
-                setExpired(undefined);
-            }
-        },
-        onError: async error => {
-            const message = validateError(`${error}`)
-            await AsyncStorage.clear();
-            logOut();
-            setMessage(message);
-        }
-    });
+    // const JWT = useQuery(["JWT"], () => validarJWT(), {
+    //     enabled: false,
+    //     refetchOnMount: false,
+    //     refetchOnReconnect: false,
+    //     refetchOnWindowFocus: false,
+    //     retry: 1,
+    //     onSuccess: async ({ Person, token, Service }) => {
+    //         await setPerson(Person, token);
+    //         setService(Service);
+    //         if (Service) {
+    //             const expired = getExpired(new Date(Service.exitDate));
+    //             setExpired(expired);
+    //         } else {
+    //             setExpired(undefined);
+    //         }
+    //     },
+    //     onError: async error => {
+    //         const message = validateError(`${error}`)
+    //         await AsyncStorage.clear();
+    //         logOut();
+    //         setMessage(message);
+    //     }
+    // });
 
     const Account = useQuery(["Account"], () => GetAccountMW((service?.id_service) ? service.id_service : ''), {
         refetchOnMount: false,
         refetchOnWindowFocus: false,
-        enabled: true,
+        enabled: (account === undefined) ? true : false,
         retry: 1,
         onSuccess: data => {
             const { account } = data;
@@ -58,14 +59,11 @@ export const AccountGeneral = () => {
             }
         }
     });
+
     const consulta = () => {
-        Account.refetch().then(() => {
-            JWT.refetch();
-        })
+        queryClient.refetchQueries('JWT');
     }
-    useEffect(() => {
-        consulta();
-    }, [service]);
+
     return (
         <SafeAreaView style={screen.full}>
             {(isFocused && message !== undefined && (message.message !== 'La sesión expiró' && message.message !== 'Token invalido')) && <ShowMessage show message={{
@@ -73,7 +71,7 @@ export const AccountGeneral = () => {
                 icon: true, type: message.type,
                 message: message.message
             }} />}
-            {isFocused && <ShowMessage show={(Account.isLoading || Account.isFetching) ? true : false} loading />}
+            {isFocused && <ShowMessage show={(queryClient.getQueryState('JWT')?.isFetching || Account.isLoading || Account.isFetching) ? true : false} loading />}
             <ScrollView refreshControl={<RefreshControl refreshing={false} onRefresh={consulta} />}>
                 {
                     (service && !service.isTimeExpired) &&

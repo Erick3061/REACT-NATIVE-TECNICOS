@@ -9,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { gFolio, screen, textStyle } from '../../theme/styles';
 import { useIsFocused } from '@react-navigation/native';
 import { ShowMessage } from '../../components/modals/ModalShowMessage';
-import { Button } from 'react-native-paper';
+import { Button, FAB } from 'react-native-paper';
 import { colors } from '../../theme/colors';
 import Icon from 'react-native-vector-icons/Ionicons';
 

@@ -1,7 +1,7 @@
 import { CalendarProps, LocaleConfig } from 'react-native-calendars';
 import { Person, Service, Account, Message, Expired } from '../interfaces/interfaces';
 import { colors } from '../theme/colors';
-
+import { PermissionStatus } from 'react-native-permissions';
 LocaleConfig.locales[''] = {
     monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',],
     dayNames: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
@@ -16,7 +16,8 @@ export type AppAction =
     | { type: 'setService', payload: { service: Service | undefined } }
     | { type: 'setMessage', payload: { message: Message | undefined } }
     | { type: 'setExpired', payload: { expired: Expired | undefined } }
-    | { type: 'setAccount', payload: { account: Account | undefined } };
+    | { type: 'setAccount', payload: { account: Account | undefined } }
+    | { type: 'setCameraPermission', payload: { cameraPermissionStatus: PermissionStatus } };
 
 export type AppContextProps = {
     status: status;
@@ -25,12 +26,15 @@ export type AppContextProps = {
     account: Account | undefined;
     message: Message | undefined;
     expired: Expired | undefined;
+    cameraPermissionStatus: PermissionStatus;
     setPerson: (person: Person | undefined, token: string) => Promise<void>;
     setService: (service: Service | undefined) => Promise<void>;
     setAccount: (account: Account | undefined) => Promise<void>;
     setExpired: (account: Expired | undefined) => Promise<void>;
     setMessage: (message: Message | undefined) => Promise<void>
     logOut: () => Promise<void>;
+    askCameraPermission: () => void;
+    checkCameraPermission: () => void;
 }
 
 export const calendar: CalendarProps = {

@@ -5,15 +5,17 @@ import { colors } from '../theme/colors';
 import { ZoneScreen } from '../screens/private/TabsScreens/ZoneScreen';
 import { UserScreen } from '../screens/private/TabsScreens/UserScreen';
 
-export type Root = {
+export type RootData = {
     ZoneScreen: undefined;
     UserScreen: undefined;
     ContactScreen: undefined;
 }
 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { ValidateServiceScreen } from '../screens/private/ValidateServiceScreen';
+import { LoadFiles } from '../screens/private/LoadFiles';
 
-const TopTab = createMaterialTopTabNavigator<Root>();
+const TopTab = createMaterialTopTabNavigator<RootData>();
 
 export const AcountDataTopTabs = () => {
     return (
@@ -42,5 +44,38 @@ export const AcountDataTopTabs = () => {
             <TopTab.Screen name="UserScreen" options={{ tabBarLabel: 'USUARIOS' }} component={UserScreen} />
             <TopTab.Screen name="ContactScreen" options={{ tabBarLabel: 'CONTACTOS' }} component={ContactScreen} />
         </TopTab.Navigator>
+    );
+}
+
+export type RootService = {
+    ValidateServiceScreen: undefined;
+    LoadFiles: undefined;
+}
+const TopTabService = createMaterialTopTabNavigator<RootService>();
+export const AccountServiceTopTabs = () => {
+    return (
+        <TopTabService.Navigator
+            screenOptions={({ route }) => ({
+                tabBarActiveTintColor: 'white',
+                sceneAnimationEnabled: true,
+                tabBarStyle: {
+                    backgroundColor: colors.Primary,
+                    elevation: 10,
+                },
+                tabBarIcon: ({ color, focused }) => {
+                    let iconName: string = (route.name === 'LoadFiles') ? (focused) ? 'image' : 'image-outline'
+                        : (route.name === 'ValidateServiceScreen') ? (focused) ? 'archive' : 'archive-outline'
+                            : 'call';
+                    return (<Icon name={iconName} size={25} color={color} />)
+                },
+                tabBarShowLabel: false,
+                lazy: true,
+                tabBarBounces: true,
+
+            })}
+        >
+            <TopTabService.Screen name="LoadFiles" options={{ tabBarLabel: 'ZONAS' }} component={LoadFiles} />
+            <TopTabService.Screen name="ValidateServiceScreen" options={{ tabBarLabel: 'USUARIOS' }} component={ValidateServiceScreen} />
+        </TopTabService.Navigator>
     );
 }

@@ -1,13 +1,23 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Account, datalogIn, event, LogInData, ResponseApi, ServiceDetails, Services } from '../interfaces/interfaces';
+import { Account, datalogIn, event, LogInData, ResponseApi, responseLoadFile, ServiceDetails, Services } from '../interfaces/interfaces';
 
 const baseUrl = 'https://pem-sa.ddns.me:3007/api';
+// const baseUrl = 'http://127.0.0.1:3007/api';
 export const Api = async (endpoint: string, data: object = {}, method: 'GET' | 'POST' = 'GET') => {
     const url = `${baseUrl}/${endpoint}`;
     const token = await AsyncStorage.getItem('token');
     const headers: HeadersInit_ | undefined = {};
     (token) ? Object.assign(headers, { 'Content-type': 'application/json', 'x-token': token }) : Object.assign(headers, { 'Content-type': 'application/json', });
     return (method === 'GET') ? fetch(url, { method, headers }) : fetch(url, { method, headers, body: JSON.stringify(data) });
+}
+
+export const loadFile = async (props: FormData) => {
+    try {
+        const response = await Api('files/loadFile', props, 'POST');
+        const { status, data, errors }: ResponseApi<responseLoadFile> = await response.json();
+        if (status && data) return data;
+        throw new Error(errors![0].msg);
+    } catch (error) { throw new Error(`${error}`); }
 }
 
 export const logIn = async ({ acceso, password }: LogInData) => {

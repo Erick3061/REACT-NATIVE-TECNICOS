@@ -11,9 +11,11 @@ export type RootStackParams = {
 }
 const RootStack = createStackNavigator<RootStackParams>();
 export const ProtectedScreen = () => {
+
     const { expired, setExpired, service } = useContext(AppContext);
+
     const countDown = () => {
-        if (expired?.hours === 0 && expired.minutes === 0 && expired.seconds === 0)
+        if (expired?.hours === 0 && expired.minutes === 0 && expired.seconds === 0 && expired.seconds > 0)
             setExpired(undefined);
         else if (expired?.minutes === 0 && expired.seconds === 0) {
             setExpired({ hours: expired!.hours - 1, minutes: 59, seconds: 59 });
@@ -23,15 +25,21 @@ export const ProtectedScreen = () => {
             setExpired({ hours: expired!.hours, minutes: expired!.minutes, seconds: expired!.seconds - 1 });
         }
     };
+
     useEffect(() => {
-        if (!service?.withOutFolio && !service?.isTimeExpired && expired !== undefined && service !== undefined) {
+        // setExpired(expired)
+        // if (expired && service && service.withOutFolio && service.isTimeExpired) {
+        // const interval = setInterval(() => countDown(), 900);
+        // return () => clearInterval(interval);
+        // } else {
+        //     setExpired(undefined);
+        // }
+        if (expired !== undefined) {
             const interval = setInterval(() => countDown(), 900);
             return () => clearInterval(interval);
-        } else {
-            setExpired(undefined);
-            console.log(`ssdadbakhdbab`);
         }
     }, [expired]);
+
 
     return (
         <RootStack.Navigator
