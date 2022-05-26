@@ -2,15 +2,22 @@ import React from 'react'
 import { KeyboardAvoidingView, SafeAreaView, ScrollView, StatusBar, View } from 'react-native';
 import { Button, Text, TextInput } from 'react-native-paper';
 import { Background } from '../../components/Backgroud';
-import { useForm } from '../../hooks/useForm';
 import { colors } from '../../theme/colors';
 import { buttonStyle, screen, textStyle } from '../../theme/styles';
 import { useNavigation } from '@react-navigation/native';
 import { StackActions } from '@react-navigation/native';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { InputsForgetPassword } from '../../types/Types';
+import { Input } from '../../components/Input';
 
 export const ForgetPasswordScreen = () => {
     const navigation = useNavigation();
-    const { onChange, acceso } = useForm({ acceso: '', password: '' });
+    const { control, handleSubmit, formState: { errors }, reset } = useForm<InputsForgetPassword>({ defaultValues: { access: '', employeeNumber: '', lastName: '', name: '' } });
+    const onSubmit: SubmitHandler<InputsForgetPassword> = async (data) => {
+        const { access, employeeNumber, lastName, name } = data;
+        console.log(data);
+
+    };
     return (
         <SafeAreaView style={screen.full}>
             <StatusBar backgroundColor={colors.Primary} barStyle={'light-content'} />
@@ -27,58 +34,43 @@ export const ForgetPasswordScreen = () => {
                                 Ingrese su correo electronico designado por la empresa
                             </Text>
 
-                            <TextInput
-                                style={[{ fontSize: 20, backgroundColor: 'rgba(0,0,0,0)' }]}
-                                label="Acceso"
-                                placeholder="ejemplo@correo.com o usuario"
-                                value={acceso}
-                                onChangeText={(text) => onChange(text, 'acceso')}
-                                left={
-                                    <TextInput.Icon
-                                        name={'account'}
-                                        size={35}
-                                    />
-                                }
+                            <Input
+                                key={'name'}
+                                control={control}
+                                icon='account'
+                                label='Nombre'
+                                placeholder='Ingrese su nombre'
+                                name='name'
                             />
-                            <TextInput
-                                style={[{ fontSize: 20, backgroundColor: 'rgba(0,0,0,0)' }]}
-                                label="Acceso"
-                                placeholder="ejemplo@correo.com o usuario"
-                                value={acceso}
-                                onChangeText={(text) => onChange(text, 'acceso')}
-                                left={
-                                    <TextInput.Icon
-                                        name={'account'}
-                                        size={35}
-                                    />
-                                }
+                            {errors.name && <Text style={{ color: colors.Secondary }}>Campo requerido</Text>}
+                            <Input
+                                key={'lastName'}
+                                control={control}
+                                icon='account'
+                                label='Apellidos'
+                                placeholder='Ingrese sus apellidos'
+                                name='lastName'
                             />
-                            <TextInput
-                                style={[{ fontSize: 20, backgroundColor: 'rgba(0,0,0,0)' }]}
-                                label="Acceso"
-                                placeholder="ejemplo@correo.com o usuario"
-                                value={acceso}
-                                onChangeText={(text) => onChange(text, 'acceso')}
-                                left={
-                                    <TextInput.Icon
-                                        name={'account'}
-                                        size={35}
-                                    />
-                                }
+                            {errors.lastName && <Text style={{ color: colors.Secondary }}>Campo requerido</Text>}
+                            <Input
+                                key={'access'}
+                                control={control}
+                                icon='account'
+                                label='acceso'
+                                placeholder='ejemplo@correo.com o usuario'
+                                name='access'
                             />
-                            <TextInput
-                                style={[{ fontSize: 20, backgroundColor: 'rgba(0,0,0,0)' }]}
-                                label="Acceso"
-                                placeholder="ejemplo@correo.com o usuario"
-                                value={acceso}
-                                onChangeText={(text) => onChange(text, 'acceso')}
-                                left={
-                                    <TextInput.Icon
-                                        name={'account'}
-                                        size={35}
-                                    />
-                                }
+                            {errors.access && <Text style={{ color: colors.Secondary }}>Campo requerido</Text>}
+                            <Input
+                                key={'employeeNumber'}
+                                control={control}
+                                icon='account'
+                                label='Número de empleado'
+                                placeholder='Ingrese su número de empleado'
+                                name='employeeNumber'
                             />
+                            {errors.employeeNumber && <Text style={{ color: colors.Secondary }}>Campo requerido</Text>}
+
                         </View>
                         <View style={{ ...buttonStyle.buttonContainer, marginTop: 15 }}>
                             <Button
@@ -88,7 +80,7 @@ export const ForgetPasswordScreen = () => {
                                 icon={'login'}
                                 mode='contained'
                                 // loading={(JWT.isFetching || LogIn.isFetching || JWT.isLoading || LogIn.isLoading) ? true : false}
-                                onPress={() => { }}
+                                onPress={handleSubmit(onSubmit)}
                                 // disabled={(JWT.isFetching || LogIn.isFetching || JWT.isLoading || LogIn.isLoading) ? true : false}
                                 labelStyle={{ fontSize: 15, color: colors.Primary }}
                             > Restablecer Contraseña </Button>

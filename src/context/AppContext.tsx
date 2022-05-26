@@ -61,7 +61,6 @@ export const AppProvider = ({ children }: any) => {
     );
 
     const validarToken = async () => {
-        console.log(state);
         const token = await AsyncStorage.getItem('token');
         if (token !== null) {
             JWT.refetch();

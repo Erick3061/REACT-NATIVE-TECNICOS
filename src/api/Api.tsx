@@ -3,7 +3,7 @@ import { Account, datalogIn, event, LogInData, ResponseApi, responseLoadFile, Se
 
 // export const baseUrl = 'https://pem-sa.ddns.me:3007/api';
 // const baseUrl = 'http://127.0.0.1:3007/api';
-export const baseUrl = 'http://192.168.1.65:3007/api';
+export const baseUrl = 'http://192.168.0.3:3007/api';
 export const Api = async (endpoint: string, data: object = {}, method: 'GET' | 'POST' = 'GET') => {
     const url = `${baseUrl}/${endpoint}`;
     const token = await AsyncStorage.getItem('token');

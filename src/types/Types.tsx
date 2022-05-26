@@ -13,6 +13,19 @@ export type InputsLogIn = {
     password: string,
 };
 
+export type InputsChangePassword = {
+    password: string;
+    newPassword: string;
+    confirmPassword: string;
+};
+
+export type InputsForgetPassword = {
+    name: string;
+    lastName: string;
+    access: string;
+    employeeNumber: string;
+};
+
 export type status = 'loged' | 'no-loged';
 
 export type AppAction =

@@ -1,5 +1,5 @@
 import { StackScreenProps } from '@react-navigation/stack';
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { View, StatusBar, KeyboardAvoidingView, ScrollView, SafeAreaView } from 'react-native';
 import { RootStackParams } from '../../routes/PublicStackScreen';
 import { colors } from '../../theme/colors';
@@ -11,24 +11,37 @@ import { GetVersionApp, logIn } from '../../api/Api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ShowMessage } from '../../components/modals/ModalShowMessage';
 import { getExpired, validateError } from '../../functions/helpers';
-import { Button, Text, TextInput, Title } from 'react-native-paper';
+import { Button, Text, Title } from 'react-native-paper';
 import { useIsFocused } from '@react-navigation/native';
-import { Input } from '../../components/Input';
 import VersionNumber from 'react-native-version-number';
-import { useForm, SubmitHandler, SubmitErrorHandler, Controller } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { InputsLogIn } from '../../types/Types';
+import { Input } from '../../components/Input';
 
 interface Props extends StackScreenProps<RootStackParams, 'LogInScreen'> { };
 export const LogInScreen = ({ navigation }: Props) => {
     const isFocused = useIsFocused();
     const queryClient = useQueryClient();
-    const { register, setValue, handleSubmit, reset, formState } = useForm<InputsLogIn>();
-    const onError: SubmitErrorHandler<InputsLogIn> = (errors, e) => {
-        return console.log(errors)
-    }
+    const { control, handleSubmit, formState: { errors }, reset } = useForm<InputsLogIn>({ defaultValues: { acceso: '', password: '' } });
 
-    const onSubmit: SubmitHandler<InputsLogIn> = (data) => {
-        console.log(data);
+    const onSubmit: SubmitHandler<InputsLogIn> = async (data) => {
+        const { acceso, password } = data;
+        await VersionApp.refetch()
+            .then(data => {
+                if (data.isError) {
+                    const meessage = validateError(`${data.error}`);
+                    if (meessage) setMessage({ message: meessage.message, type: 'error' });
+                }
+                if (data.isSuccess) {
+                    if (VersionNumber.appVersion === data.data.version) {
+                        LogIn.mutate({ acceso, password });
+                        reset();
+                    } else {
+                        setIsUpdate(true);
+                    }
+                }
+            })
+            .catch(err => setMessage(validateError(`${err}`)))
     };
 
     const { setPerson, setService, message, setMessage, setAccount, setExpired } = useContext(AppContext);
@@ -65,24 +78,6 @@ export const LogInScreen = ({ navigation }: Props) => {
             retry: 1,
         }
     );
-
-    // const onLogIn = async () => {
-    //     await VersionApp.refetch()
-    //         .then(data => {
-    //             if (data.isError) {
-    //                 setMessage(validateError(`${data.error}`));
-    //             }
-    //             if (data.isSuccess) {
-    //                 if (VersionNumber.appVersion === data.data.version) {
-    //                     LogIn.mutate({ acceso, password });
-    //                     reset();
-    //                 } else {
-    //                     setIsUpdate(true);
-    //                 }
-    //             }
-    //         })
-    //         .catch(err => setMessage(validateError(`${err}`)))
-    // }
     return (
         <SafeAreaView style={[screen.full]}>
             {
@@ -104,10 +99,25 @@ export const LogInScreen = ({ navigation }: Props) => {
                 <Title style={{ color: colors.Primary, alignSelf: 'center', fontSize: 30, paddingTop: 50 }}> APP Técnicos </Title>
                 <KeyboardAvoidingView style={{ paddingHorizontal: 20 }}>
                     <View style={{ justifyContent: 'center' }}>
-                        {/* <TextInput {...register('acceso', { required: true })} />
-                        {errors.acceso?.type === 'required' && <Text>requerido</Text>} */}
-                        <Input key={'user'} name='acceso' icon='account' register={register} formState={formState} label='Acceso' placeholder='ejemplo@correo.com o usuario' />
-                        <Input key={'password'} name='password' icon='lock' register={register} formState={formState} label='Contraseña' placeholder='Escriba su contraseña' isPassword />
+                        <Input
+                            key={'acceso'}
+                            control={control}
+                            icon='account'
+                            label='acceso'
+                            placeholder='ejemplo@correo.com o usuario'
+                            name='acceso'
+                        />
+                        {errors.acceso && <Text style={{ color: colors.Secondary }}>Campo requerido</Text>}
+                        <Input
+                            key={'password'}
+                            control={control}
+                            icon='lock'
+                            label='password'
+                            placeholder='ejemplo@correo.com o usuario'
+                            name='password'
+                            isPassword
+                        />
+                        {errors.password && <Text style={{ color: colors.Secondary }}>Campo requerido</Text>}
                     </View>
                     <Button
                         style={{ borderRadius: 12, marginVertical: 10, width: '70%', alignSelf: 'center', marginTop: 40 }}
