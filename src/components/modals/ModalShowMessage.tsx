@@ -17,9 +17,14 @@ interface PropsMessage {
         message: string;
     };
     update?: string;
+    confirm?: {
+        function: () => void;
+        title: string;
+        btns: { textConfirm: string, textCancel: string }
+    }
 }
 
-export const ShowMessage = ({ loading, message, show, update }: PropsMessage) => {
+export const ShowMessage = ({ loading, message, show, update, confirm }: PropsMessage) => {
     const [close, setclose] = useState<boolean>(show);
     const { setMessage, message: MESSAGE } = useContext(AppContext);
     const closeMessage = () => {
@@ -99,6 +104,17 @@ export const ShowMessage = ({ loading, message, show, update }: PropsMessage) =>
                             />
                             <Text style={[modalMessage.text, { textAlign: 'center' }]}>Presiona el botón para descargar la nueva actualización</Text>
                         </Dialog.Content>
+                    </>
+                }
+                {
+                    confirm &&
+                    <>
+                        <Dialog.Title>{confirm.title}</Dialog.Title>
+                        <Dialog.Content>
+
+                        </Dialog.Content>
+                        <Dialog.Actions>
+                        </Dialog.Actions>
                     </>
                 }
             </Dialog>

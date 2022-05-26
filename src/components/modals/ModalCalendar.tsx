@@ -5,7 +5,7 @@ import { getDate } from '../../functions/helpers';
 import { Calendar } from 'react-native-calendars';
 import { formatDate } from '../../interfaces/interfaces';
 import { Dialog, Portal, Text } from 'react-native-paper';
-import { calendar } from '../../types/reducersTypes';
+import { calendar } from '../../types/Types';
 
 interface Props {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>

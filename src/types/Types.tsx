@@ -8,6 +8,11 @@ LocaleConfig.locales[''] = {
     dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab']
 };
 
+export type InputsLogIn = {
+    acceso: string,
+    password: string,
+};
+
 export type status = 'loged' | 'no-loged';
 
 export type AppAction =

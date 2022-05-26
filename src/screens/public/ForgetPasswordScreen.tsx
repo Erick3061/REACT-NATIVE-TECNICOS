@@ -40,6 +40,45 @@ export const ForgetPasswordScreen = () => {
                                     />
                                 }
                             />
+                            <TextInput
+                                style={[{ fontSize: 20, backgroundColor: 'rgba(0,0,0,0)' }]}
+                                label="Acceso"
+                                placeholder="ejemplo@correo.com o usuario"
+                                value={acceso}
+                                onChangeText={(text) => onChange(text, 'acceso')}
+                                left={
+                                    <TextInput.Icon
+                                        name={'account'}
+                                        size={35}
+                                    />
+                                }
+                            />
+                            <TextInput
+                                style={[{ fontSize: 20, backgroundColor: 'rgba(0,0,0,0)' }]}
+                                label="Acceso"
+                                placeholder="ejemplo@correo.com o usuario"
+                                value={acceso}
+                                onChangeText={(text) => onChange(text, 'acceso')}
+                                left={
+                                    <TextInput.Icon
+                                        name={'account'}
+                                        size={35}
+                                    />
+                                }
+                            />
+                            <TextInput
+                                style={[{ fontSize: 20, backgroundColor: 'rgba(0,0,0,0)' }]}
+                                label="Acceso"
+                                placeholder="ejemplo@correo.com o usuario"
+                                value={acceso}
+                                onChangeText={(text) => onChange(text, 'acceso')}
+                                left={
+                                    <TextInput.Icon
+                                        name={'account'}
+                                        size={35}
+                                    />
+                                }
+                            />
                         </View>
                         <View style={{ ...buttonStyle.buttonContainer, marginTop: 15 }}>
                             <Button

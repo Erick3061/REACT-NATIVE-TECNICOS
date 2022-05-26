@@ -74,8 +74,8 @@ export const AccountServiceTopTabs = () => {
 
             })}
         >
-            <TopTabService.Screen name="LoadFiles" options={{ tabBarLabel: 'ZONAS' }} component={LoadFiles} />
             <TopTabService.Screen name="ValidateServiceScreen" options={{ tabBarLabel: 'USUARIOS' }} component={ValidateServiceScreen} />
+            <TopTabService.Screen name="LoadFiles" options={{ tabBarLabel: 'ZONAS' }} component={LoadFiles} />
         </TopTabService.Navigator>
     );
 }

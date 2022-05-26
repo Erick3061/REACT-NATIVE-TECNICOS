@@ -1,8 +1,7 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import React, { useContext, useEffect, useState } from 'react'
-import { View, StatusBar, KeyboardAvoidingView, ScrollView, SafeAreaView, Alert, Platform } from 'react-native';
+import { View, StatusBar, KeyboardAvoidingView, ScrollView, SafeAreaView } from 'react-native';
 import { RootStackParams } from '../../routes/PublicStackScreen';
-import { useForm } from '../../hooks/useForm';
 import { colors } from '../../theme/colors';
 import { screen, textStyle } from '../../theme/styles';
 import { Background } from '../../components/Backgroud';
@@ -12,17 +11,26 @@ import { GetVersionApp, logIn } from '../../api/Api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ShowMessage } from '../../components/modals/ModalShowMessage';
 import { getExpired, validateError } from '../../functions/helpers';
-import { Button, Text, Title } from 'react-native-paper';
+import { Button, Text, TextInput, Title } from 'react-native-paper';
 import { useIsFocused } from '@react-navigation/native';
 import { Input } from '../../components/Input';
 import VersionNumber from 'react-native-version-number';
+import { useForm, SubmitHandler, SubmitErrorHandler, Controller } from "react-hook-form";
+import { InputsLogIn } from '../../types/Types';
 
 interface Props extends StackScreenProps<RootStackParams, 'LogInScreen'> { };
-export const LogInScreen = ({ navigation, route }: Props) => {
+export const LogInScreen = ({ navigation }: Props) => {
     const isFocused = useIsFocused();
     const queryClient = useQueryClient();
-    // const { onChange, acceso, password, reset } = useForm({ acceso: '', password: '' });
-    const { onChange, acceso, password, reset } = useForm({ acceso: 'erick.andrade@pem-sa.com', password: '1' });
+    const { register, setValue, handleSubmit, reset, formState } = useForm<InputsLogIn>();
+    const onError: SubmitErrorHandler<InputsLogIn> = (errors, e) => {
+        return console.log(errors)
+    }
+
+    const onSubmit: SubmitHandler<InputsLogIn> = (data) => {
+        console.log(data);
+    };
+
     const { setPerson, setService, message, setMessage, setAccount, setExpired } = useContext(AppContext);
     const [IsUpdate, setIsUpdate] = useState<boolean>(false);
 
@@ -58,24 +66,23 @@ export const LogInScreen = ({ navigation, route }: Props) => {
         }
     );
 
-    const onLogIn = async () => {
-        await VersionApp.refetch()
-            .then(data => {
-                if (data.isError) {
-                    setMessage(validateError(`${data.error}`));
-                }
-                if (data.isSuccess) {
-                    if (VersionNumber.appVersion === data.data.version) {
-                        LogIn.mutate({ acceso, password });
-                        reset();
-                    } else {
-                        setIsUpdate(true);
-                    }
-                }
-            })
-            .catch(err => setMessage(validateError(`${err}`)))
-    }
-
+    // const onLogIn = async () => {
+    //     await VersionApp.refetch()
+    //         .then(data => {
+    //             if (data.isError) {
+    //                 setMessage(validateError(`${data.error}`));
+    //             }
+    //             if (data.isSuccess) {
+    //                 if (VersionNumber.appVersion === data.data.version) {
+    //                     LogIn.mutate({ acceso, password });
+    //                     reset();
+    //                 } else {
+    //                     setIsUpdate(true);
+    //                 }
+    //             }
+    //         })
+    //         .catch(err => setMessage(validateError(`${err}`)))
+    // }
     return (
         <SafeAreaView style={[screen.full]}>
             {
@@ -97,8 +104,10 @@ export const LogInScreen = ({ navigation, route }: Props) => {
                 <Title style={{ color: colors.Primary, alignSelf: 'center', fontSize: 30, paddingTop: 50 }}> APP Técnicos </Title>
                 <KeyboardAvoidingView style={{ paddingHorizontal: 20 }}>
                     <View style={{ justifyContent: 'center' }}>
-                        <Input key={'user'} field='acceso' icon='account' onChange={onChange} value={acceso} label='Acceso' placeholder='ejemplo@correo.com o usuario' />
-                        <Input key={'password'} field='password' icon='lock' onChange={onChange} value={password} label='Contraeña' placeholder='Escriba su contraseña' isPassword />
+                        {/* <TextInput {...register('acceso', { required: true })} />
+                        {errors.acceso?.type === 'required' && <Text>requerido</Text>} */}
+                        <Input key={'user'} name='acceso' icon='account' register={register} formState={formState} label='Acceso' placeholder='ejemplo@correo.com o usuario' />
+                        <Input key={'password'} name='password' icon='lock' register={register} formState={formState} label='Contraseña' placeholder='Escriba su contraseña' isPassword />
                     </View>
                     <Button
                         style={{ borderRadius: 12, marginVertical: 10, width: '70%', alignSelf: 'center', marginTop: 40 }}
@@ -107,7 +116,7 @@ export const LogInScreen = ({ navigation, route }: Props) => {
                         icon={'login'}
                         mode='contained'
                         loading={(LogIn.isLoading || VersionApp.isFetching || LogIn.isLoading || VersionApp.isLoading) ? true : false}
-                        onPress={onLogIn}
+                        onPress={handleSubmit(onSubmit)}
                         disabled={(LogIn.isLoading || VersionApp.isFetching || LogIn.isLoading || VersionApp.isLoading) ? true : false}
                         labelStyle={{ fontSize: 15, color: colors.Primary }}
                     > Iniciar Sesión </Button>

@@ -1,9 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Account, datalogIn, event, LogInData, ResponseApi, responseLoadFile, ServiceDetails, Services } from '../interfaces/interfaces';
 
-// const baseUrl = 'https://pem-sa.ddns.me:3007/api';
+// export const baseUrl = 'https://pem-sa.ddns.me:3007/api';
 // const baseUrl = 'http://127.0.0.1:3007/api';
-const baseUrl = 'http://192.168.0.4:3007/api';
+export const baseUrl = 'http://192.168.1.65:3007/api';
 export const Api = async (endpoint: string, data: object = {}, method: 'GET' | 'POST' = 'GET') => {
     const url = `${baseUrl}/${endpoint}`;
     const token = await AsyncStorage.getItem('token');
@@ -25,6 +25,24 @@ export const loadFile = async ({ file, id_service }: { file: FormData, id_servic
         throw new Error(errors![0].msg);
     } catch (error) { throw new Error(`${error}`); }
 }
+
+export const getImgs = async (id_service: string) => {
+    try {
+        const response = await Api(`files/getImgs/${id_service}`, {}, 'GET');
+        const { status, data, errors }: ResponseApi<{ files: Array<string> }> = await response.json();
+        if (status && data) return data;
+        throw new Error(errors![0].msg);
+    } catch (error) { throw new Error(`${error}`); }
+};
+
+export const deleteImg = async (props: { id_service: string, file: string }) => {
+    try {
+        const response = await Api(`files/deleteFileToService`, props, 'POST');
+        const { status, data, errors }: ResponseApi<{ isDeleted: boolean }> = await response.json();
+        if (status && data) return data;
+        throw new Error(errors![0].msg);
+    } catch (error) { throw new Error(`${error}`); }
+};
 
 export const logIn = async ({ acceso, password }: LogInData) => {
     try {

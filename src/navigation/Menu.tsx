@@ -194,7 +194,7 @@ const MenuContent = (props: DrawerContentComponentProps) => {
                     <>
                         <ItemDrawer
                             active={active}
-                            icon_name='business-outline'
+                            icon_name='push-outline'
                             nameOpc='AccountServiceTopTabs'
                             props={props}
                             setActive={setActive}
@@ -202,7 +202,7 @@ const MenuContent = (props: DrawerContentComponentProps) => {
                             navigate='AccountServiceTopTabs'
                             key='AccountServiceTopTabs'
                         />
-                        <ItemDrawer
+                        {/* <ItemDrawer
                             active={active}
                             icon_name='push-outline'
                             nameOpc='ValidateServiceScreen'
@@ -211,7 +211,7 @@ const MenuContent = (props: DrawerContentComponentProps) => {
                             label="Obtener folio"
                             navigate='ValidateServiceScreen'
                             key='ValidateServiceScreen'
-                        />
+                        /> */}
                     </>
                 }
             </DrawerContentScrollView>

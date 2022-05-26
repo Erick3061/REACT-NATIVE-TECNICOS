@@ -15,9 +15,10 @@ export const ProtectedScreen = () => {
     const { expired, setExpired, service } = useContext(AppContext);
 
     const countDown = () => {
-        if (expired?.hours === 0 && expired.minutes === 0 && expired.seconds === 0 && expired.seconds > 0)
+        if (expired?.hours === 0 && expired.minutes === 0 && expired.seconds === 0)
             setExpired(undefined);
         else if (expired?.minutes === 0 && expired.seconds === 0) {
+            if (expired.hours - 1 < 0) setExpired(undefined);
             setExpired({ hours: expired!.hours - 1, minutes: 59, seconds: 59 });
         } else if (expired?.seconds === 0) {
             setExpired({ hours: expired!.hours, minutes: expired!.minutes - 1, seconds: 59 });

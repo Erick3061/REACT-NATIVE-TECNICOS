@@ -10,7 +10,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { useMutation, useQuery } from 'react-query';
 import { ChangePassword, ValidatePassword } from '../../api/Api';
 import { validateError } from '../../functions/helpers';
-import { Input } from '../../components/Input';
+// import { Input } from '../../components/Input';
 
 export const ChangePasswordScreen = () => {
     const isFocused = useIsFocused();
@@ -87,7 +87,7 @@ export const ChangePasswordScreen = () => {
 
     return (
         <SafeAreaView style={screen.full}>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            {/* <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 {(isFocused && message !== undefined && (message.message !== 'La sesión expiró' && message.message !== 'Token invalido' && !message.message.includes('Se cerro la sesión por seguridad'))) &&
                     <ShowMessage show message={{
                         title: 'ERROR',
@@ -122,7 +122,7 @@ export const ChangePasswordScreen = () => {
                         </View>
                     </View>
                 </KeyboardAvoidingView>
-            </View>
+            </View> */}
         </SafeAreaView>
     )
 }

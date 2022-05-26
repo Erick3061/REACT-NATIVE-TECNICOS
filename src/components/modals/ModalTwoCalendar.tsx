@@ -7,7 +7,7 @@ import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { formatDate } from '../../interfaces/interfaces';
 import { Button, Dialog, Portal } from 'react-native-paper';
 import { MarkingProps } from '../../../node_modules/react-native-calendars/src/calendar/day/marking';
-import { calendar } from '../../types/reducersTypes';
+import { calendar } from '../../types/Types';
 
 interface Props {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>

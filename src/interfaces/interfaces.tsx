@@ -1,4 +1,4 @@
-import { status } from "../types/reducersTypes";
+import { status } from "../types/Types";
 import { PermissionStatus } from 'react-native-permissions';
 import { ImagePickerResponse } from 'react-native-image-picker';
 export interface Message {

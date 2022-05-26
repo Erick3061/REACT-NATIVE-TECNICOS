@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useReducer } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { appReducer } from './AppReducer';
 import { Account, AppState, Person, Service, Message, Expired } from '../interfaces/interfaces';
-import { AppContextProps as AppContextProps } from '../types/reducersTypes';
+import { AppContextProps as AppContextProps } from '../types/Types';
 import { check, PERMISSIONS, request, openSettings, PermissionStatus } from 'react-native-permissions';
 import { AppState as AplicationStatus, Platform } from 'react-native';
 import { useQuery } from 'react-query';
