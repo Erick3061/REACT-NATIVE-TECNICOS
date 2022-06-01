@@ -2,11 +2,11 @@ import { StackScreenProps } from '@react-navigation/stack';
 import React, { Fragment, useContext, useState } from 'react'
 import { Appbar, Card, Chip, Text, Title } from 'react-native-paper';
 import { RootStackParams } from '../../routes/PrivatedStackScreen';
-import { useQuery, QueryClient, useQueryClient } from 'react-query';
-import { getServiceWithDetails } from '../../api/Api';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { getImgs, getServiceWithDetails } from '../../api/Api';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useIsFocused } from '@react-navigation/native';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { RefreshControl } from 'react-native';
 import { ShowMessage } from '../../components/modals/ModalShowMessage';
 import { validateError } from '../../functions/helpers';
@@ -15,7 +15,7 @@ import { AppContext } from '../../context/AppContext';
 import { colors } from '../../theme/colors';
 import { screen } from '../../theme/styles';
 import { technical } from '../../interfaces/interfaces';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { CardImage } from '../../components/CardImage';
 
 interface Props extends StackScreenProps<RootStackParams, 'ServiceDetails'> { };
 export const ServiceDetails = ({ navigation, route }: Props) => {
@@ -51,8 +51,9 @@ export const ServiceDetails = ({ navigation, route }: Props) => {
                 setUsersMissing(usersMissing);
                 const usersUndefined = JSON.parse(data.binnacle[0].usersUndefined);
                 setUsersUndefined(usersUndefined);
-
-
+                if (data.service.filesCron === 'going up') {
+                    getFiles.mutate({ id: data.service.id_service, type: 'Service' });
+                }
             } catch (error) {
                 return ShowMessage({ show: true, message: { message: `${error}`, type: 'error', icon: true, title: 'ERRROR' } });
             }
@@ -64,6 +65,13 @@ export const ServiceDetails = ({ navigation, route }: Props) => {
                 await AsyncStorage.clear();
                 await logOut();
             }
+        }
+    });
+
+    const getFiles = useMutation('files', getImgs, {
+        retry: 0,
+        onError: error => {
+            setMessage(validateError(`${error}`));
         }
     });
 
@@ -200,6 +208,18 @@ export const ServiceDetails = ({ navigation, route }: Props) => {
                             </Card.Content>
                         </Card>
 
+                        <Card style={styles.card}>
+                            <Card.Content style={{ display: 'flex' }}>
+                                <Title style={styles.title}>Fotos</Title>
+                                {
+                                    getFiles.isLoading
+                                        ? <Title style={styles.subTitle}>Cargando...</Title>
+                                        : getFiles.data
+                                            ? <CardImage files={getFiles.data.files} id_service={ServiceDetails.data.service.id_service} />
+                                            : <Title style={styles.subTitle}>Sin imágenes</Title>
+                                }
+                            </Card.Content>
+                        </Card>
                     </>
                 }
             </ScrollView>

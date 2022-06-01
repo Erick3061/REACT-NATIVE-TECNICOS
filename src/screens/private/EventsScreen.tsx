@@ -80,7 +80,6 @@ export const EventsScreen = () => {
     useEffect(() => {
         if (expired !== undefined && auto) {
             const reconsulted = setInterval(() => actual(), 1000 * (60 * 5));
-            // const reconsulted = setInterval(() => actual(), 1000 * (5));
             return () => clearInterval(reconsulted);
         }
     });

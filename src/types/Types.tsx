@@ -29,7 +29,7 @@ export type InputsForgetPassword = {
 export type status = 'loged' | 'no-loged';
 
 export type AppAction =
-    | { type: 'logIn', payload: { person: Person | undefined } }
+    | { type: 'logIn', payload: { person: Person | undefined, file?: string } }
     | { type: 'logOut' }
     | { type: 'setService', payload: { service: Service | undefined } }
     | { type: 'setMessage', payload: { message: Message | undefined } }
@@ -44,8 +44,9 @@ export type AppContextProps = {
     account: Account | undefined;
     message: Message | undefined;
     expired: Expired | undefined;
+    file: string | undefined
     cameraPermissionStatus: PermissionStatus;
-    setPerson: (person: Person | undefined, token: string) => Promise<void>;
+    setPerson: (person: Person | undefined, token: string, directory?: string) => Promise<void>;
     setService: (service: Service | undefined) => Promise<void>;
     setAccount: (account: Account | undefined) => Promise<void>;
     setExpired: (account: Expired | undefined) => Promise<void>;

@@ -7,7 +7,8 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
             return {
                 ...state,
                 status: 'loged',
-                person: action.payload.person
+                person: action.payload.person,
+                file: action.payload.file
             }
         case 'logOut':
             return {
@@ -17,6 +18,7 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
                 service: undefined,
                 account: undefined,
                 expired: undefined,
+                file: undefined
             }
         case 'setService':
             return {

@@ -67,7 +67,7 @@ export const ServicesScreen = ({ navigation }: Props) => {
                     if (!Data.isActive) {
                         navigation.navigate('ServiceDetails', { el: Data });
                     } else {
-                        setMessage({ message: 'Servicio activo', type: 'warning' });
+                        setMessage({ message: `Servicio activo\n\n${Data.isDelivered ? `COMUNICATE A MONITOREO PARA REGISTRAR TU SALIDA\n\nFOLIO: ${Data.folio}` : ''}`, type: 'warning' });
                     }
                 }}
             >

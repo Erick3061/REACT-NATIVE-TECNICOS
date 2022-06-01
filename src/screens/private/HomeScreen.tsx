@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { Image, RefreshControl, ScrollView } from 'react-native';
 import { AppContext } from '../../context/AppContext';
 import { colors } from '../../theme/colors';
@@ -25,7 +25,8 @@ export const HomeScreen = () => {
             {isFocused && <ShowMessage show={(queryClient.getQueryState('JWT')?.isFetching) ? true : false} loading />}
             <ScrollView
                 style={[{ width: '100%', height: '100%', position: 'absolute' }]}
-                refreshControl={<RefreshControl refreshing={(queryClient.getQueryState('JWT')!.isFetching)} onRefresh={() => queryClient.refetchQueries('JWT')} />}
+                refreshControl={
+                    <RefreshControl refreshing={(queryClient.getQueryState('JWT')?.isFetching) ? true : false} onRefresh={() => queryClient.refetchQueries('JWT')} />}
             >
                 <Text style={{ ...textStyle.title, color: colors.Primary, alignSelf: 'center', top: 10, marginVertical: 15, paddingHorizontal: 5, fontWeight: 'bold' }}
                     adjustsFontSizeToFit
@@ -41,9 +42,10 @@ export const HomeScreen = () => {
                 visible
                 style={{ backgroundColor: colors.background }}
                 theme={{ colors: { surface: colors.Primary } }}
+                action={{ label: '', icon: 'refresh', color: colors.Secondary, labelStyle: { fontSize: 30 }, onPress: () => queryClient.refetchQueries('JWT') }}
                 onDismiss={() => { }}
             >
-                DESLIZA HACIA ABAJO PARA ACTUALIZAR
+                DESLIZA HACIA ABAJO PARA ACTUALIZAR O PRESIONA EL BOTON
             </Snackbar>
         </SafeAreaView >
     )

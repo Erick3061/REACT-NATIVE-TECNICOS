@@ -10,6 +10,7 @@ import { loadFile, baseUrl, getImgs, deleteImg } from '../../api/Api';
 import { Image, RefreshControl, View, Pressable } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { validateError } from '../../functions/helpers';
+import { CardImage } from '../../components/CardImage';
 
 export const LoadFiles = () => {
     const isFocused = useIsFocused();
@@ -20,8 +21,8 @@ export const LoadFiles = () => {
     const [isViewImage, setisViewImage] = useState<boolean>(false);
     const [imageSelected, setimageSelected] = useState<string>('');
 
-    const Files = useQuery('Files', () => getImgs(service!.id_service), {
-        retry: 1,
+    const Files = useQuery('Files', () => getImgs({ id: service!.id_service, type: 'Service' }), {
+        retry: 0,
         onSuccess: data => {
             setfiles(() => data.files);
         },
@@ -34,7 +35,7 @@ export const LoadFiles = () => {
     });
 
     const loadFileM = useMutation('loadfileMutuate', loadFile, {
-        retry: 1,
+        retry: 0,
         onMutate: () => {
             setisLoading(true);
         },
@@ -82,7 +83,7 @@ export const LoadFiles = () => {
                     name: assets[0].fileName,
                 }
                 formData.append('file', fileUpload);
-                loadFileM.mutate({ file: formData, id_service: service!.id_service });
+                loadFileM.mutate({ file: formData, id: service!.id_service, type: 'Service' });
             }
         });
     }
@@ -106,7 +107,7 @@ export const LoadFiles = () => {
                     name: assets[0].fileName,
                 }
                 formData.append('file', fileUpload);
-                loadFileM.mutate({ file: formData, id_service: service!.id_service });
+                loadFileM.mutate({ file: formData, id: service!.id_service, type: 'Service' });
             }
         });
     }
@@ -128,30 +129,12 @@ export const LoadFiles = () => {
                 />
             }
             {isFocused && <ShowMessage show={(isLoading || Files.isLoading || Files.isFetching) ? true : false} loading />}
-
-            <ScrollView refreshControl={<RefreshControl refreshing={Files.isFetching} onRefresh={() => Files.refetch()} />}>
-                {
-                    files.map((el, idx) => (
-                        <Card style={{ marginTop: 15 }} elevation={10} key={el}>
-                            <Card.Cover resizeMode='cover' resizeMethod='resize' total={500} source={{ uri: `${baseUrl}/files/getImg?service=${service?.id_service}&img=${el}` }} />
-                            <Card.Actions style={{ backgroundColor: colors.background }}>
-                                <Button color={colors.Primary} icon={'delete'} onPress={() => deleteFileM.mutate({ id_service: `${service?.id_service}`, file: el })} >Delete</Button>
-                                <Button color={colors.Primary} icon={'fullscreen'} onPress={() => {
-                                    setimageSelected(`${baseUrl}/files/getImg?service=${service?.id_service}&img=${el}`)
-                                    setisViewImage(true)
-                                }}>Ver</Button>
-                            </Card.Actions>
-                        </Card>
-                    ))
-                }
-            </ScrollView>
-            {
-                (imageSelected !== '') && <Portal>
-                    <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.8)', justifyContent: 'center', paddingHorizontal: 15 }} onPress={() => setimageSelected('')}>
-                        <Image source={{ uri: imageSelected }} resizeMode='contain' style={{ width: '100%', height: '80%' }} />
-                    </Pressable>
-                </Portal>
-            }
+            <CardImage
+                key='Images'
+                files={files}
+                id_service={`${service?.id_service}`}
+                isScrollView={{ deleteFileM: deleteFileM, Files: Files }}
+            />
             <Portal>
                 <FAB.Group
                     fabStyle={{ backgroundColor: isOpen ? colors.PrimaryDark : colors.Primary }}

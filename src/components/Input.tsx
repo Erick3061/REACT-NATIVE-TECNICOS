@@ -5,7 +5,7 @@ import { TextInput } from 'react-native-paper'
 interface props {
     control: Control<any, any>;
     name: string;
-    icon: string;
+    icon?: string;
     isPassword?: boolean;
     label: string;
     placeholder: string;
@@ -15,7 +15,9 @@ export const Input = ({ isPassword, icon, label, placeholder, control, name }: p
     return (
         <Controller
             control={control}
-            rules={{ required: true }}
+            rules={{
+                required: true
+            }}
             name={name}
             render={({ field: { value, onBlur, onChange } }) => (
                 <TextInput
@@ -26,9 +28,7 @@ export const Input = ({ isPassword, icon, label, placeholder, control, name }: p
                     label={label.toUpperCase()}
                     placeholder={placeholder}
                     secureTextEntry={isPassword ? !ShowPassword : undefined}
-                    left={
-                        <TextInput.Icon name={icon} size={35} />
-                    }
+                    left={icon ? <TextInput.Icon name={icon} size={35} /> : undefined}
                     right={
                         isPassword ?
                             < TextInput.Icon

@@ -1,9 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Account, datalogIn, event, LogInData, ResponseApi, responseLoadFile, ServiceDetails, Services } from '../interfaces/interfaces';
+import { Account, datalogIn, event, LogInData, ResetPasswordProps, ResponseApi, responseLoadFile, ServiceDetails, Services } from '../interfaces/interfaces';
 
-// export const baseUrl = 'https://pem-sa.ddns.me:3007/api';
-// const baseUrl = 'http://127.0.0.1:3007/api';
-export const baseUrl = 'http://192.168.0.3:3007/api';
+export const baseUrl = 'https://pem-sa.ddns.me:3007/api';
+// export const baseUrl = 'http://192.168.1.65:3007/api';
+
 export const Api = async (endpoint: string, data: object = {}, method: 'GET' | 'POST' = 'GET') => {
     const url = `${baseUrl}/${endpoint}`;
     const token = await AsyncStorage.getItem('token');
@@ -12,10 +12,10 @@ export const Api = async (endpoint: string, data: object = {}, method: 'GET' | '
     return (method === 'GET') ? fetch(url, { method, headers }) : fetch(url, { method, headers, body: JSON.stringify(data) });
 }
 
-export const loadFile = async ({ file, id_service }: { file: FormData, id_service: string }) => {
+export const loadFile = async ({ file, id, type }: { file: FormData, id: string, type: string }) => {
     try {
         const token = await AsyncStorage.getItem('token');
-        const response = await fetch(`${baseUrl}/files/loadFile/${id_service}`, {
+        const response = await fetch(`${baseUrl}/files/loadFile/${id}/${type}`, {
             body: file,
             headers: (token) ? { 'Content-type': 'multipart/form-data', 'x-token': token } : { 'Content-Type': 'multipart/form-data' },
             method: 'PUT'
@@ -26,9 +26,9 @@ export const loadFile = async ({ file, id_service }: { file: FormData, id_servic
     } catch (error) { throw new Error(`${error}`); }
 }
 
-export const getImgs = async (id_service: string) => {
+export const getImgs = async ({ id, type }: { id: string, type: string }) => {
     try {
-        const response = await Api(`files/getImgs/${id_service}`, {}, 'GET');
+        const response = await Api(`files/getImgs/${id}/${type}`, {}, 'GET');
         const { status, data, errors }: ResponseApi<{ files: Array<string> }> = await response.json();
         if (status && data) return data;
         throw new Error(errors![0].msg);
@@ -48,6 +48,15 @@ export const logIn = async ({ acceso, password }: LogInData) => {
     try {
         const response = await Api('auth/logIn', { acceso, password }, 'POST');
         const { status, data, errors }: ResponseApi<datalogIn> = await response.json();
+        if (status && data) return data;
+        throw new Error(errors![0].msg);
+    } catch (error) { throw new Error(`${error}`); }
+};
+
+export const ResetPassword = async (props: ResetPasswordProps) => {
+    try {
+        const response = await Api('auth/resetPassword', props, 'POST');
+        const { status, data, errors }: ResponseApi<{ passwordWasReset: boolean }> = await response.json();
         if (status && data) return data;
         throw new Error(errors![0].msg);
     } catch (error) { throw new Error(`${error}`); }

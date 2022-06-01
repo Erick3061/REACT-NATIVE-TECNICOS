@@ -22,7 +22,7 @@ interface Props extends StackScreenProps<RootStackParams, 'LogInScreen'> { };
 export const LogInScreen = ({ navigation }: Props) => {
     const isFocused = useIsFocused();
     const queryClient = useQueryClient();
-    const { control, handleSubmit, formState: { errors }, reset } = useForm<InputsLogIn>({ defaultValues: { acceso: '', password: '' } });
+    const { control, handleSubmit, formState: { errors }, reset, setValue } = useForm<InputsLogIn>({ defaultValues: { acceso: '', password: '' } });
 
     const onSubmit: SubmitHandler<InputsLogIn> = async (data) => {
         const { acceso, password } = data;
@@ -35,7 +35,6 @@ export const LogInScreen = ({ navigation }: Props) => {
                 if (data.isSuccess) {
                     if (VersionNumber.appVersion === data.data.version) {
                         LogIn.mutate({ acceso, password });
-                        reset();
                     } else {
                         setIsUpdate(true);
                     }
@@ -50,12 +49,13 @@ export const LogInScreen = ({ navigation }: Props) => {
     const LogIn = useMutation(["LogIn"], logIn,
         {
             retry: 1,
-            onSuccess: async ({ Person, token, Service, AccountMW }) => {
+            onSuccess: async ({ Person, token, Service, AccountMW, directory }) => {
+                reset();
                 if (Person.id_role !== 1) {
                     await AsyncStorage.clear();
                     setMessage(validateError('No tienes acceso a este sistema'));
                 } else {
-                    await setPerson(Person, token);
+                    await setPerson(Person, token, (directory) ? directory[0] : undefined);
                     await setService(Service);
                     await setAccount(AccountMW);
                     if (Service) {
@@ -66,7 +66,11 @@ export const LogInScreen = ({ navigation }: Props) => {
                     }
                 }
             },
-            onError: async error => setMessage(validateError(`${error}`))
+            onError: async error => {
+                const message = validateError(`${error}`);
+                if (message) setMessage({ message: message.message, type: message.type });
+                setValue('password', '');
+            }
         }
     );
 

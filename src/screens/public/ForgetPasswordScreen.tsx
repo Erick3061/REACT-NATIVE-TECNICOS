@@ -1,26 +1,57 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { KeyboardAvoidingView, SafeAreaView, ScrollView, StatusBar, View } from 'react-native';
 import { Button, Text, TextInput } from 'react-native-paper';
 import { Background } from '../../components/Backgroud';
 import { colors } from '../../theme/colors';
 import { buttonStyle, screen, textStyle } from '../../theme/styles';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { StackActions } from '@react-navigation/native';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { InputsForgetPassword } from '../../types/Types';
 import { Input } from '../../components/Input';
+import { useMutation } from 'react-query';
+import { ResetPassword } from '../../api/Api';
+import { validateError } from '../../functions/helpers';
+import { AppContext } from '../../context/AppContext';
+import { ShowMessage } from '../../components/modals/ModalShowMessage';
 
 export const ForgetPasswordScreen = () => {
+    const isFocused = useIsFocused();
+    const { setMessage, message } = useContext(AppContext);
+
     const navigation = useNavigation();
     const { control, handleSubmit, formState: { errors }, reset } = useForm<InputsForgetPassword>({ defaultValues: { access: '', employeeNumber: '', lastName: '', name: '' } });
-    const onSubmit: SubmitHandler<InputsForgetPassword> = async (data) => {
-        const { access, employeeNumber, lastName, name } = data;
-        console.log(data);
 
+    const ResetPasswordM = useMutation('ResetPasswordM', ResetPassword, {
+        retry: 1,
+        onSuccess: data => {
+            setMessage({ message: `Contraseña restaurada, Inicie sesion nuevamente con su número de empleado`, type: 'message' });
+            reset()
+        },
+        onError: error => {
+            const message = validateError(`${error}`);
+            if (message) setMessage(message);
+        }
+    });
+
+    const onSubmit: SubmitHandler<InputsForgetPassword> = async ({ access, employeeNumber, lastName, name }) => {
+        ResetPasswordM.mutate({ access: access.trim(), employeeNumber: employeeNumber.trim(), lastName: lastName.trim(), name: name.trim() });
     };
     return (
         <SafeAreaView style={screen.full}>
             <StatusBar backgroundColor={colors.Primary} barStyle={'light-content'} />
+            {
+                (message !== undefined && isFocused) &&
+                <ShowMessage
+                    show message={{
+                        title: (message.type === 'error') ? 'Error' : (message.type === 'message') ? 'Correcto' : 'Alerta',
+                        icon: true,
+                        type: message.type,
+                        message: message.message
+                    }}
+                />
+            }
+            {isFocused && <ShowMessage show={(ResetPasswordM.isLoading) ? true : false} loading />}
             <ScrollView>
                 <Background />
                 <KeyboardAvoidingView>
@@ -37,8 +68,7 @@ export const ForgetPasswordScreen = () => {
                             <Input
                                 key={'name'}
                                 control={control}
-                                icon='account'
-                                label='Nombre'
+                                label='Nombre(s)'
                                 placeholder='Ingrese su nombre'
                                 name='name'
                             />
@@ -46,7 +76,6 @@ export const ForgetPasswordScreen = () => {
                             <Input
                                 key={'lastName'}
                                 control={control}
-                                icon='account'
                                 label='Apellidos'
                                 placeholder='Ingrese sus apellidos'
                                 name='lastName'
@@ -55,7 +84,6 @@ export const ForgetPasswordScreen = () => {
                             <Input
                                 key={'access'}
                                 control={control}
-                                icon='account'
                                 label='acceso'
                                 placeholder='ejemplo@correo.com o usuario'
                                 name='access'
@@ -64,7 +92,6 @@ export const ForgetPasswordScreen = () => {
                             <Input
                                 key={'employeeNumber'}
                                 control={control}
-                                icon='account'
                                 label='Número de empleado'
                                 placeholder='Ingrese su número de empleado'
                                 name='employeeNumber'
@@ -77,11 +104,10 @@ export const ForgetPasswordScreen = () => {
                                 style={{ borderRadius: 12, marginVertical: 10, width: '90%' }}
                                 contentStyle={{ height: 50, borderRadius: 12, borderWidth: 2, borderColor: colors.Primary }}
                                 color={colors.background}
-                                icon={'login'}
                                 mode='contained'
-                                // loading={(JWT.isFetching || LogIn.isFetching || JWT.isLoading || LogIn.isLoading) ? true : false}
+                                loading={(ResetPasswordM.isLoading) ? true : false}
+                                disabled={(ResetPasswordM.isLoading) ? true : false}
                                 onPress={handleSubmit(onSubmit)}
-                                // disabled={(JWT.isFetching || LogIn.isFetching || JWT.isLoading || LogIn.isLoading) ? true : false}
                                 labelStyle={{ fontSize: 15, color: colors.Primary }}
                             > Restablecer Contraseña </Button>
 
@@ -91,9 +117,9 @@ export const ForgetPasswordScreen = () => {
                                 color={colors.background}
                                 icon={'login'}
                                 mode='contained'
-                                // loading={(JWT.isFetching || LogIn.isFetching || JWT.isLoading || LogIn.isLoading) ? true : false}
+                                loading={(ResetPasswordM.isLoading) ? true : false}
+                                disabled={(ResetPasswordM.isLoading) ? true : false}
                                 onPress={() => navigation.dispatch(StackActions.pop())}
-                                // disabled={(JWT.isFetching || LogIn.isFetching || JWT.isLoading || LogIn.isLoading) ? true : false}
                                 labelStyle={{ fontSize: 15, color: colors.Primary }}
                             > Iniciar Sesión </Button>
                         </View>

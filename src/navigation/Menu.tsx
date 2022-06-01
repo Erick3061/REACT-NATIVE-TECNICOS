@@ -15,7 +15,7 @@ import { HistoryScreen } from '../screens/private/HistoryScreen';
 import { ValidateServiceScreen } from '../screens/private/ValidateServiceScreen';
 import { ServicesScreen } from '../screens/private/ServicesScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { LoadFiles } from '../screens/private/LoadFiles';
+import { baseUrl } from '../api/Api';
 export type RootDrawerNAvigator = {
     HomeScreen: undefined;
     AccountGeneral: undefined;
@@ -88,7 +88,7 @@ const MenuHeader = ({ layout, navigation, options, route }: DrawerHeaderProps) =
 }
 
 const MenuContent = (props: DrawerContentComponentProps) => {
-    const { logOut, person, service } = useContext(AppContext);
+    const { logOut, person, service, file } = useContext(AppContext);
     const [active, setActive] = useState('HomeScreen');
     const close = async () => await logOut();
 
@@ -109,7 +109,7 @@ const MenuContent = (props: DrawerContentComponentProps) => {
                         onPress={() => props.navigation.closeDrawer()}
                     />}
                 />
-                <Avatar.Image size={100} source={{ uri: `https://pem-sa.ddns.me/assets/personal/${person?.personName} ${person?.lastname}.jpg` }} />
+                {(file) ? <Avatar.Image size={100} source={{ uri: `${baseUrl}/files/getImg?type=Person&id=${person?.id_person}&img=${file}` }} /> : <Avatar.Icon icon={'account'} size={100} />}
                 <Title numberOfLines={1} adjustsFontSizeToFit style={DrawerStyle.title}>{person?.personName} {person?.lastname}</Title>
                 <Title numberOfLines={1} adjustsFontSizeToFit style={{ ...DrawerStyle.title, marginTop: -10 }}>E-mail: {person?.email}</Title>
                 <Title numberOfLines={1} adjustsFontSizeToFit style={{ ...DrawerStyle.title, marginTop: -10 }}>Usuario:{person?.nameUser}</Title>

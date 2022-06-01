@@ -1,5 +1,5 @@
-import React, { createContext, useEffect, useReducer } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import React, { createContext, useEffect, useReducer } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { appReducer } from './AppReducer';
 import { Account, AppState, Person, Service, Message, Expired } from '../interfaces/interfaces';
 import { AppContextProps as AppContextProps } from '../types/Types';
@@ -16,7 +16,8 @@ const initialState: AppState = {
     account: undefined,
     message: undefined,
     expired: { hours: 99, minutes: 59, seconds: 59 },
-    cameraPermissionStatus: 'unavailable'
+    cameraPermissionStatus: 'unavailable',
+    file: undefined,
 }
 
 export const AppContext = createContext({} as AppContextProps);
@@ -26,18 +27,13 @@ export const AppProvider = ({ children }: any) => {
 
     const JWT = useQuery(["JWT"], () => validarJWT(),
         {
-            refetchOnMount: false,
-            refetchOnWindowFocus: false,
-            refetchOnReconnect: false,
-            enabled: true,
-            refetchInterval: false,
-            retry: 1,
-            onSuccess: async ({ Person, token, Service, AccountMW }) => {
+            retry: 0,
+            onSuccess: async ({ Person, token, Service, AccountMW, directory }) => {
                 if (Person.id_role !== 1) {
                     await AsyncStorage.clear();
                     setMessage(validateError('No tienes acceso a este sistema'));
                 } else {
-                    await setPerson(Person, token);
+                    await setPerson(Person, token, (directory) ? directory[0] : undefined);
                     await setService(Service);
                     if (Service) {
                         const expired = getExpired(new Date(Service.exitDate));
@@ -75,7 +71,7 @@ export const AppProvider = ({ children }: any) => {
         });
     }, []);
 
-    const setPerson = async (person: Person | undefined, token: string) => await AsyncStorage.setItem('token', token).then(() => dispatch({ type: 'logIn', payload: { person } }));
+    const setPerson = async (person: Person | undefined, token: string, directory: string | undefined) => await AsyncStorage.setItem('token', token).then(() => dispatch({ type: 'logIn', payload: { person, file: directory } }));
 
     const setService = async (service: Service | undefined) => dispatch({ type: 'setService', payload: { service } });
 

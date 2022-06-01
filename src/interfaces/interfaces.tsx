@@ -20,6 +20,7 @@ export interface AppState {
     account: Account | undefined;
     expired: Expired | undefined;
     cameraPermissionStatus: PermissionStatus;
+    file: string | undefined;
 }
 
 export interface Account {
@@ -96,6 +97,7 @@ export interface Service {
     isTimeExpired: boolean;
     isActive: boolean;
     withOutFolio: boolean;
+    filesCron: string | null;
 }
 
 
@@ -103,6 +105,14 @@ export interface LogInData {
     acceso: string;
     password: string;
 }
+
+export interface ResetPasswordProps {
+    access: string;
+    name: string;
+    lastName: string;
+    employeeNumber: string;
+}
+
 
 export interface Errors {
     msg: string;
@@ -123,6 +133,7 @@ export interface datalogIn {
     token: string;
     Service?: Service;
     AccountMW?: Account;
+    directory?: Array<string>;
 }
 
 export interface responseLoadFile {

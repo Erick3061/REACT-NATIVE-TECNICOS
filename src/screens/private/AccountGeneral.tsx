@@ -17,30 +17,6 @@ export const AccountGeneral = () => {
     const queryClient = useQueryClient();
     const { service, account, setAccount, logOut, message, setMessage, setPerson, setService, setExpired, expired } = useContext(AppContext);
     const isFocused = useIsFocused();
-    // const JWT = useQuery(["JWT"], () => validarJWT(), {
-    //     enabled: false,
-    //     refetchOnMount: false,
-    //     refetchOnReconnect: false,
-    //     refetchOnWindowFocus: false,
-    //     retry: 1,
-    //     onSuccess: async ({ Person, token, Service }) => {
-    //         await setPerson(Person, token);
-    //         setService(Service);
-    //         if (Service) {
-    //             const expired = getExpired(new Date(Service.exitDate));
-    //             setExpired(expired);
-    //         } else {
-    //             setExpired(undefined);
-    //         }
-    //     },
-    //     onError: async error => {
-    //         const message = validateError(`${error}`)
-    //         await AsyncStorage.clear();
-    //         logOut();
-    //         setMessage(message);
-    //     }
-    // });
-
     const Account = useQuery(["Account"], () => GetAccountMW((service?.id_service) ? service.id_service : ''), {
         refetchOnMount: false,
         refetchOnWindowFocus: false,
@@ -61,7 +37,7 @@ export const AccountGeneral = () => {
     });
 
     const consulta = () => {
-        queryClient.refetchQueries('JWT');
+        queryClient.invalidateQueries('JWT');
     }
 
     return (

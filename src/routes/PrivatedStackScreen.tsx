@@ -41,7 +41,6 @@ export const ProtectedScreen = () => {
         }
     }, [expired]);
 
-
     return (
         <RootStack.Navigator
             screenOptions={{
