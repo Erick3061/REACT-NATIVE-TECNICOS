@@ -45,6 +45,11 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
                 ...state,
                 cameraPermissionStatus: action.payload.cameraPermissionStatus
             }
+        case 'updateApp':
+            return {
+                ...state,
+                isUpdate: action.payload.isUpdate
+            }
         default:
             return state;
     }

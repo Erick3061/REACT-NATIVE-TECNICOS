@@ -6,8 +6,8 @@ import { colors } from '../../theme/colors';
 import { screen, textStyle } from '../../theme/styles';
 import { Background } from '../../components/Backgroud';
 import { AppContext } from '../../context/AppContext';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { GetVersionApp, logIn } from '../../api/Api';
+import { useMutation, useQueryClient } from 'react-query';
+import { logIn } from '../../api/Api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ShowMessage } from '../../components/modals/ModalShowMessage';
 import { getExpired, validateError } from '../../functions/helpers';
@@ -17,34 +17,29 @@ import VersionNumber from 'react-native-version-number';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { InputsLogIn } from '../../types/Types';
 import { Input } from '../../components/Input';
+import { useVersionApp } from '../../hooks/versionApp';
 
 interface Props extends StackScreenProps<RootStackParams, 'LogInScreen'> { };
 export const LogInScreen = ({ navigation }: Props) => {
     const isFocused = useIsFocused();
     const queryClient = useQueryClient();
+    const versionApp = useVersionApp();
+
     const { control, handleSubmit, formState: { errors }, reset, setValue } = useForm<InputsLogIn>({ defaultValues: { acceso: '', password: '' } });
+    const { setPerson, setService, message, setMessage, setAccount, setExpired, isUpdate, setUpdate } = useContext(AppContext);
 
     const onSubmit: SubmitHandler<InputsLogIn> = async (data) => {
         const { acceso, password } = data;
-        await VersionApp.refetch()
+        await versionApp.refetch()
             .then(data => {
                 if (data.isError) {
                     const meessage = validateError(`${data.error}`);
                     if (meessage) setMessage({ message: meessage.message, type: 'error' });
                 }
-                if (data.isSuccess) {
-                    if (VersionNumber.appVersion === data.data.version) {
-                        LogIn.mutate({ acceso, password });
-                    } else {
-                        setIsUpdate(true);
-                    }
-                }
-            })
-            .catch(err => setMessage(validateError(`${err}`)))
-    };
 
-    const { setPerson, setService, message, setMessage, setAccount, setExpired } = useContext(AppContext);
-    const [IsUpdate, setIsUpdate] = useState<boolean>(false);
+                if (data.isSuccess) (VersionNumber.appVersion === data.data.version) ? LogIn.mutate({ acceso, password }) : setUpdate(true);
+            }).catch(err => setMessage(validateError(`${err}`)))
+    };
 
     const LogIn = useMutation(["LogIn"], logIn,
         {
@@ -74,14 +69,6 @@ export const LogInScreen = ({ navigation }: Props) => {
         }
     );
 
-    const VersionApp = useQuery(["VersionApp"], () => GetVersionApp(),
-        {
-            refetchOnMount: false,
-            refetchOnWindowFocus: false,
-            enabled: false,
-            retry: 1,
-        }
-    );
     return (
         <SafeAreaView style={[screen.full]}>
             {
@@ -95,8 +82,8 @@ export const LogInScreen = ({ navigation }: Props) => {
                     }}
                 />
             }
-            {isFocused && <ShowMessage show={(queryClient.getQueryState('JWT')?.isFetching || LogIn.isLoading || VersionApp.isFetching || LogIn.isLoading || VersionApp.isLoading) ? true : false} loading />}
-            {IsUpdate && <ShowMessage show update={VersionApp.data?.url} />}
+            {isFocused && <ShowMessage show={(queryClient.getQueryState('JWT')?.isFetching || LogIn.isLoading || versionApp.isFetching || LogIn.isLoading || versionApp.isLoading) ? true : false} loading />}
+            {isUpdate && <ShowMessage show update={versionApp.data?.url} />}
             <StatusBar backgroundColor={colors.Primary} barStyle={'light-content'} />
             <ScrollView>
                 <Background />
@@ -129,9 +116,9 @@ export const LogInScreen = ({ navigation }: Props) => {
                         color={colors.background}
                         icon={'login'}
                         mode='contained'
-                        loading={(LogIn.isLoading || VersionApp.isFetching || LogIn.isLoading || VersionApp.isLoading) ? true : false}
+                        loading={(LogIn.isLoading || versionApp.isFetching || LogIn.isLoading || versionApp.isLoading) ? true : false}
                         onPress={handleSubmit(onSubmit)}
-                        disabled={(LogIn.isLoading || VersionApp.isFetching || LogIn.isLoading || VersionApp.isLoading) ? true : false}
+                        disabled={(LogIn.isLoading || versionApp.isFetching || LogIn.isLoading || versionApp.isLoading) ? true : false}
                         labelStyle={{ fontSize: 15, color: colors.Primary }}
                     > Iniciar Sesión </Button>
                     <Button
@@ -140,9 +127,9 @@ export const LogInScreen = ({ navigation }: Props) => {
                         color={colors.background}
                         icon={'lock-question'}
                         mode='contained'
-                        loading={(LogIn.isLoading || VersionApp.isFetching || LogIn.isLoading || VersionApp.isLoading) ? true : false}
+                        loading={(LogIn.isLoading || versionApp.isFetching || LogIn.isLoading || versionApp.isLoading) ? true : false}
                         onPress={() => { navigation.navigate('ForgetPasswordScreen') }}
-                        disabled={(LogIn.isLoading || VersionApp.isFetching || LogIn.isLoading || VersionApp.isLoading) ? true : false}
+                        disabled={(LogIn.isLoading || versionApp.isFetching || LogIn.isLoading || versionApp.isLoading) ? true : false}
                         labelStyle={{ fontSize: 15, color: colors.Primary }}
                     > Olvidé mi contraseña </Button>
                 </KeyboardAvoidingView>

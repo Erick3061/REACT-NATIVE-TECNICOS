@@ -21,6 +21,7 @@ export interface AppState {
     expired: Expired | undefined;
     cameraPermissionStatus: PermissionStatus;
     file: string | undefined;
+    isUpdate: boolean;
 }
 
 export interface Account {

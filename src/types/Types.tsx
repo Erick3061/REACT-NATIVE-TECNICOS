@@ -31,6 +31,7 @@ export type status = 'loged' | 'no-loged';
 export type AppAction =
     | { type: 'logIn', payload: { person: Person | undefined, file?: string } }
     | { type: 'logOut' }
+    | { type: 'updateApp', payload: { isUpdate: boolean } }
     | { type: 'setService', payload: { service: Service | undefined } }
     | { type: 'setMessage', payload: { message: Message | undefined } }
     | { type: 'setExpired', payload: { expired: Expired | undefined } }
@@ -44,13 +45,15 @@ export type AppContextProps = {
     account: Account | undefined;
     message: Message | undefined;
     expired: Expired | undefined;
-    file: string | undefined
+    file: string | undefined;
+    isUpdate: boolean;
     cameraPermissionStatus: PermissionStatus;
     setPerson: (person: Person | undefined, token: string, directory?: string) => Promise<void>;
     setService: (service: Service | undefined) => Promise<void>;
     setAccount: (account: Account | undefined) => Promise<void>;
     setExpired: (account: Expired | undefined) => Promise<void>;
-    setMessage: (message: Message | undefined) => Promise<void>
+    setMessage: (message: Message | undefined) => Promise<void>;
+    setUpdate: (isUpdate: boolean) => Promise<void>;
     logOut: () => Promise<void>;
     askCameraPermission: () => void;
     checkCameraPermission: () => void;

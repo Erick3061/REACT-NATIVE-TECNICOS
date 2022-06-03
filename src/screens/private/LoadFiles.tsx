@@ -1,14 +1,12 @@
 import React, { useContext, useState } from 'react';
-import { Button, Card, Dialog, FAB, Modal, Portal, Provider, } from 'react-native-paper';
+import { FAB, Portal, Provider, } from 'react-native-paper';
 import { colors } from '../../theme/colors';
-import { launchCamera, launchImageLibrary, ImagePickerResponse } from 'react-native-image-picker';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { useIsFocused } from '@react-navigation/native';
 import { AppContext } from '../../context/AppContext';
 import { ShowMessage } from '../../components/modals/ModalShowMessage';
 import { useMutation, useQuery } from 'react-query';
-import { loadFile, baseUrl, getImgs, deleteImg } from '../../api/Api';
-import { Image, RefreshControl, View, Pressable } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { loadFile, getImgs, deleteImg } from '../../api/Api';
 import { validateError } from '../../functions/helpers';
 import { CardImage } from '../../components/CardImage';
 
@@ -18,8 +16,6 @@ export const LoadFiles = () => {
     const { message, setMessage, askCameraPermission, service } = useContext(AppContext);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [files, setfiles] = useState<Array<string>>([]);
-    const [isViewImage, setisViewImage] = useState<boolean>(false);
-    const [imageSelected, setimageSelected] = useState<string>('');
 
     const Files = useQuery('Files', () => getImgs({ id: service!.id_service, type: 'Service' }), {
         retry: 0,
@@ -28,7 +24,7 @@ export const LoadFiles = () => {
         },
         onError: error => {
             setfiles(() => []);
-            if (`${error}`.toLocaleLowerCase().includes('no se han subido fotos')) return setMessage({ message: `No se han subido fotos`, type: 'warning' });
+            if (`${error}`.toLocaleLowerCase().includes('directorio no existe')) return setMessage({ message: `No se han subido fotos`, type: 'warning' });
             const message = validateError(`${error}`);
             setMessage({ message: `${message}`, type: 'error' });
         }
@@ -71,7 +67,10 @@ export const LoadFiles = () => {
     const pickPhoto = () => {
         const formData = new FormData();
         launchImageLibrary({
-            mediaType: 'photo'
+            mediaType: 'photo',
+            maxWidth: 1200,
+            maxHeight: 2200,
+            quality: 1,
         }, async ({ assets, didCancel, errorCode, errorMessage }) => {
             if (errorMessage) {
                 setMessage({ message: `${errorMessage}`, type: 'error' });
