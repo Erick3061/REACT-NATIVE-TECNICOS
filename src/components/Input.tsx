@@ -15,27 +15,24 @@ export const Input = ({ isPassword, icon, label, placeholder, control, name }: p
     return (
         <Controller
             control={control}
-            rules={{
-                required: true
-            }}
+            rules={{ required: true }}
             name={name}
             render={({ field: { value, onBlur, onChange } }) => (
                 <TextInput
-                    style={[{ fontSize: 18, backgroundColor: 'rgba(0,0,0,0)' }]}
+                    style={[{ backgroundColor: 'rgba(0,0,0,0)' }]}
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
                     label={label.toUpperCase()}
                     placeholder={placeholder}
                     secureTextEntry={isPassword ? !ShowPassword : undefined}
-                    left={icon ? <TextInput.Icon name={icon} size={35} /> : undefined}
+                    left={icon ? <TextInput.Icon name={icon} /> : undefined}
                     right={
                         isPassword ?
                             < TextInput.Icon
                                 name={ShowPassword ? 'eye' : 'eye-off'}
                                 onPress={() => setShowPassword(!ShowPassword)}
                                 forceTextInputFocus={false}
-                                size={35}
                                 animated
                             />
                             : undefined

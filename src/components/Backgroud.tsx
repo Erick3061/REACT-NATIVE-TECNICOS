@@ -9,7 +9,7 @@ export const Background = () => {
                 style={{ width: '100%', height: '100%', resizeMode: 'cover', position: 'absolute' }}
             />
             <Image
-                source={{ uri: 'https://pem-sa.ddns.me/assets/logos/logo2.png' }}
+                source={{ uri: 'https://desarrollo.pem-sa.com.mx/assets/logos/logo2.png' }}
                 style={{ width: 200, height: 200, }}
             />
         </View>

@@ -1,5 +1,5 @@
 import { StackScreenProps } from '@react-navigation/stack';
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react';
 import { View, StatusBar, KeyboardAvoidingView, ScrollView, SafeAreaView } from 'react-native';
 import { RootStackParams } from '../../routes/PublicStackScreen';
 import { colors } from '../../theme/colors';

@@ -22,12 +22,10 @@ export const textStyle = StyleSheet.create({
     terminos: {
         textAlign: 'center',
         paddingVertical: 10,
-        fontSize: 18,
         fontWeight: '500'
     },
     version: {
         textAlign: 'center',
-        fontSize: 16,
         fontWeight: '500',
     },
 })

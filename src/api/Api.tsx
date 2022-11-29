@@ -1,8 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Account, datalogIn, event, LogInData, ResetPasswordProps, ResponseApi, responseLoadFile, ServiceDetails, Services } from '../interfaces/interfaces';
 
-export const baseUrl = 'https://pem-sa.ddns.me:3007/api';
-// export const baseUrl = 'http://192.168.1.65:3007/api';
+export const baseUrl = 'https://contec.pem-sa.com.mx/api';
 
 export const Api = async (endpoint: string, data: object = {}, method: 'GET' | 'POST' = 'GET') => {
     const url = `${baseUrl}/${endpoint}`;
